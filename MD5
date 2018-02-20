@@ -1,0 +1,16 @@
+e3e2234e490ff591309d801c79ecb3d6 *DESCRIPTION
+028366b4040a0e58941959b6d66b0ec2 *LICENSE
+f45d685336d756e4858cc8c61827d3b6 *NAMESPACE
+e620f118197d05e2769013be85f4ed09 *NEWS.md
+a9bf0eec31e29de9b66b446a93c41e1f *R/configurations.R
+958057da023198533500473dec57350e *R/handlers.R
+bc40651debd9e1f140fecd7d93a9a623 *R/loggit.R
+e2670b458848c2907a4b4ddaf507f84d *R/zzz.R
+10808d2ec0bff06e2ee4278b7915d6d5 *man/getLogFile.Rd
+6297208498940b2b7b3ffff691b9e88c *man/getTimestampFormat.Rd
+2b12a24493b37bfcacb0487604a2ddd2 *man/handlers.Rd
+05ecf609970a3df336fd22b822441262 *man/loggit.Rd
+e5dadbd4e43132bc92856aeb12b97892 *man/setLogFile.Rd
+be4880f5e50f7786ea417dfd18f16516 *man/setTimestampFormat.Rd
+4ad387cd9f19ae47817d4b58f0ac1f89 *tests/testthat.R
+fd607ac36b2f08cc8309bf9584d42a5c *tests/testthat/test_loggit.R
