@@ -12,8 +12,9 @@
 #' any direct user interaction, it is flexible enough to be used as you see fit.
 #'
 #' @param log_lvl Level of log output. In actual practice, one of "INFO",
-#'   "WARN", and "ERROR" are common, but any string may be supplied.
-#' @param log_msg Main log message.
+#'   "WARN", and "ERROR" are common, but any string may be supplied. Will be
+#'   coerced to class `character`.
+#' @param log_msg Main log message. Will be coerced to class `character`.
 #' @param log_detail Additional detail recorded along with a log message.
 #' @param ... A named `list` or named `vector` (each element of length one) of
 #'   other custom fields you wish to log. You do not need to explicitly provide
@@ -34,9 +35,9 @@ loggit <- function(log_lvl, log_msg, log_detail = "", ..., echo = TRUE) {
   
   if (.config$templogfile && !.config$seenmessage) {
     base::warning(paste0("loggit has no persistent log file. Please set with ",
-                   "setLogFile(logfile), or see package?loggit for more help.\n ",
-                   "Otherwise, you can recover your logs (from THIS R SESSION ONLY) ",
-                   "via copying ", .config$logfile, " to a persistent folder."))
+                         "setLogFile(logfile), or see package?loggit for more help.\n ",
+                         "Otherwise, you can recover your logs (from THIS R SESSION ONLY) ",
+                         "via copying ", .config$logfile, " to a persistent folder."))
     if (log_detail == "") log_detail <- "User was warned about non-persistent log file."
     .config$seenmessage <- TRUE
   } else {
@@ -45,23 +46,23 @@ loggit <- function(log_lvl, log_msg, log_detail = "", ..., echo = TRUE) {
   
   timestamp <- format(Sys.time(), format = .config$ts_format)
   
-  .dots <- list(...)
+  dots <- list(...)
   
-  if (length(.dots) > 0) {
-    if (any(unlist(lapply(.dots, length)) > 1))
-      base::stop("Each custom log field must be of length one, or else your logs will be multiplied!")
+  if (length(dots) > 0) {
+    if (any(unlist(lapply(dots, length)) > 1))
+      base::warning("Each custom log field should be of length one, or else your logs will be multiplied!")
     log_df <- data.frame(
       timestamp = timestamp,
-      log_lvl = log_lvl,
-      log_msg = log_msg,
+      log_lvl = as.character(log_lvl),
+      log_msg = as.character(log_msg),
       log_detail = log_detail,
-      .dots,
+      dots,
       stringsAsFactors = FALSE)
   } else {
     log_df <- data.frame(
       timestamp = timestamp,
-      log_lvl = log_lvl,
-      log_msg = log_msg,
+      log_lvl = as.character(log_lvl),
+      log_msg = as.character(log_msg),
       log_detail = log_detail,
       stringsAsFactors = FALSE)
   }
@@ -85,4 +86,35 @@ loggit <- function(log_lvl, log_msg, log_detail = "", ..., echo = TRUE) {
   
   invisible()
   
+}
+
+
+
+#' Return Log File as an R Object
+#'
+#' This function returns a `data.frame` (by default) containing all the logs in
+#' the provided JSON log file. If no explicit log fie is provided, calling this
+#' function will return a data frame of the log file currently pointed to by the
+#' loggit functions. Users can request that the logs be returned as a `list`,
+#' though this is not recommended.
+#'
+#' @param logfile JSON-format log file to return.
+#' @param as_df Should logfile be returned in a `data.frame` vs. a `list`?
+#'   Defaults to `TRUE`, and will return a `data.frame`.
+#'
+#' @return A `data.frame`.
+#' 
+#' @examples
+#' setLogFile(file.path(tempdir(), "loggit.json"), confirm = FALSE)
+#' message("Test log message")
+#' get_logs(getLogFile())
+#'
+#' @export
+get_logs <- function(logfile, as_df = TRUE) {
+  if (missing(logfile)) logfile <- .config$logfile
+  if (!file.exists(logfile)) {
+    base::stop("Log file does not exist")
+  } else {
+    jsonlite::read_json(logfile, simplifyVector = as_df)
+  }
 }

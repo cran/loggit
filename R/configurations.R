@@ -16,13 +16,13 @@
 #'   introduced, the file name must end in ".json".
 #' @param confirm Print confirmation of log file setting? Defaults to `TRUE`.
 #'
-#' @examples setLogFile(paste0(tempdir(), "/loggit.json"))
+#' @examples setLogFile(file.path(tempdir(), "loggit.json"))
 #'
 #' @export
 setLogFile <- function(logfile = NULL, confirm = TRUE) {
   
   if (is.null(logfile)) {
-    .config$logfile <- paste0(tempdir(), "/loggit.json")
+    .config$logfile <- file.path(tempdir(), "loggit.json")
   } else {
     
     if (substr(logfile, nchar(logfile) - 4, nchar(logfile)) != ".json")
@@ -45,8 +45,7 @@ setLogFile <- function(logfile = NULL, confirm = TRUE) {
 #'
 #' @export
 getLogFile <- function() {
-  print(.config$logfile)
-  invisible()
+  .config$logfile
 }
 
 
@@ -76,6 +75,5 @@ setTimestampFormat <- function(ts_format = "%Y-%m-%d %H:%M:%S", confirm = TRUE) 
 #'
 #' @export
 getTimestampFormat <- function() {
-  print(.config$ts_format)
-  invisible()
+  .config$ts_format
 }
