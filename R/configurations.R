@@ -1,6 +1,19 @@
 # Configuration Environment, to be used as needed.
 .config <- new.env(parent = emptyenv())
 
+# REMOVE ONCE UPDATE GOES THROUGH
+.config$agreed_to_upcoming_loggit_updates <- FALSE
+#' Agree to upcoming loggit changes
+#'
+#' This function takes no arguments, but must be run before calling `loggit()`
+#' in a session. Due to the large, breaking changes coming in loggit v2.0, users
+#' are required to acknowledge that they have seen the error message before
+#' continuing to use this package's logging facilities.
+#'
+#' @export
+agree_to_upcoming_loggit_updates <- function() {
+  .config$agreed_to_upcoming_loggit_updates <- TRUE
+}
 
 
 #' Set Log File
@@ -26,7 +39,7 @@ setLogFile <- function(logfile = NULL, confirm = TRUE) {
   } else {
     
     if (substr(logfile, nchar(logfile) - 4, nchar(logfile)) != ".json")
-      base::stop("Log file path must be explcitly JSON, i.e. end in '.json'")
+      base::stop("Log file path must be explicitly JSON, i.e. end in '.json'")
     .config$logfile <- logfile
     .config$templogfile <- FALSE
     if (confirm) print(paste0("Log file set to ", logfile))

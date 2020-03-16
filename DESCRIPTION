@@ -8,20 +8,24 @@ Description:
     is available via these handlers' logging function, loggit(), which is also
     exported for use. No change in existing code is necessary to use this
     package.
-Version: 1.1.1
-Date: 2018-04-08
+Version: 1.2.0
+Date: 2020-03-14
 Authors@R: 
-  c(person("Ryan", "Price", email = "ryapric@gmail.com", role = c("cre", "aut")))
+    person(given = "Ryan",
+           family = "Price",
+           role = c("cre", "aut"),
+           email = "ryapric@gmail.com")
 License: MIT + file LICENSE
 Depends: R (>= 3.4.0)
 Imports: dplyr (>= 0.7.4), jsonlite (>= 1.5)
 Suggests: knitr (>= 1.19), rmarkdown (>= 1.8), testthat (>= 2.0.0)
 URL: https://github.com/ryapric/loggit
 BugReports: https://github.com/ryapric/loggit/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 7.0.2
+Encoding: UTF-8
 NeedsCompilation: no
-Packaged: 2018-04-08 23:25:25 UTC; rprice
+Packaged: 2020-03-15 02:18:49 UTC; ryan
 Author: Ryan Price [cre, aut]
 Maintainer: Ryan Price <ryapric@gmail.com>
 Repository: CRAN
-Date/Publication: 2018-04-09 07:36:59 UTC
+Date/Publication: 2020-03-16 12:20:06 UTC
