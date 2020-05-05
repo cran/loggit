@@ -1,92 +1,83 @@
 # Configuration Environment, to be used as needed.
 .config <- new.env(parent = emptyenv())
 
-# REMOVE ONCE UPDATE GOES THROUGH
-.config$agreed_to_upcoming_loggit_updates <- FALSE
-#' Agree to upcoming loggit changes
-#'
-#' This function takes no arguments, but must be run before calling `loggit()`
-#' in a session. Due to the large, breaking changes coming in loggit v2.0, users
-#' are required to acknowledge that they have seen the error message before
-#' continuing to use this package's logging facilities.
-#'
-#' @export
-agree_to_upcoming_loggit_updates <- function() {
-  .config$agreed_to_upcoming_loggit_updates <- TRUE
-}
-
 
 #' Set Log File
 #'
-#' Set the log file that loggit will write to. No logs will be written until
-#' this is set, as per CRAN policy. The suggested use of this function would be
-#' to call it early, to log to the current working directory, as follows:
-#' `setLogFile(paste0(getwd(), "/loggit.json"))`. If you are using `loggit` in
-#' your package, you can wrap this function in `.onLoad()` so that the logfile
-#' is set when your package loads.
+#' Set the log file that loggit will write to. No logs outside of a temporary
+#' directory will be written until this is set explicitly, as per CRAN policy.
+#' Therefore, the default behavior is to create a file named `loggit.log` in
+#' your system's temporary directory.
 #'
-#' @param logfile Full path to log file. Until other output formats are
-#'   introduced, the file name must end in ".json".
+#' A suggested use of this function would be to call it early, to log to the
+#' current working directory, as follows: `set_logfile(paste0(getwd(),
+#' "/loggit.log"))`. If you are using `loggit` in your package, you can wrap
+#' this function in `.onLoad()` so that the logfile is set when your package
+#' loads.
+#'
+#' @param logfile Full or relative path to log file. If not provided, will write
+#'   to `<tmpdir>/loggit.log`.
 #' @param confirm Print confirmation of log file setting? Defaults to `TRUE`.
 #'
-#' @examples setLogFile(file.path(tempdir(), "loggit.json"))
+#' @examples set_logfile(file.path(tempdir(), "loggit.log"))
 #'
 #' @export
-setLogFile <- function(logfile = NULL, confirm = TRUE) {
-  
+set_logfile <- function(logfile = NULL, confirm = TRUE) {
   if (is.null(logfile)) {
-    .config$logfile <- file.path(tempdir(), "loggit.json")
+    .config$logfile <- file.path(tempdir(), "loggit.log")
   } else {
-    
-    if (substr(logfile, nchar(logfile) - 4, nchar(logfile)) != ".json")
-      base::stop("Log file path must be explicitly JSON, i.e. end in '.json'")
     .config$logfile <- logfile
-    .config$templogfile <- FALSE
-    if (confirm) print(paste0("Log file set to ", logfile))
-    
   }
-  
-  invisible()
-  
+  if (confirm) print(paste0("Log file set to ", logfile))
 }
+
 
 #' Get Log File
 #'
-#' Get the log file that loggit will write to.
+#' Return the log file that loggit will write to.
 #' 
-#' @examples getLogFile()
+#' @examples get_logfile()
 #'
 #' @export
-getLogFile <- function() {
+get_logfile <- function() {
   .config$logfile
 }
 
 
-
 #' Set Timestamp Format
 #'
-#' Set timestamp format for use in output logs.
+#' Set timestamp format for use in output logs. This function performs no time
+#' format validations, but will echo out the current time in the provided format
+#' for manual validation.
 #'
-#' @param ts_format ISO date format.
-#' @param confirm Print confirmation of timestamp format setting? Defaults to
+#' This function provides no means of setting a timezone, and instead relies on
+#' the host system's time configuration to provide this. This is to enforce
+#' consistency across software running on the host.
+#'
+#' @param ts_format ISO date format. Defaults to ISO-8601 (e.g.
+#'   "2020-01-01T00:00:00+0000").
+#' @param confirm Print confirmation message of timestamp format? Defaults to
 #'   `TRUE`.
-#'   
-#' @examples setTimestampFormat("%Y-%m-%d %H:%M:%S")
+#'
+#' @examples set_timestamp_format("%Y-%m-%d %H:%M:%S")
 #'
 #' @export
-setTimestampFormat <- function(ts_format = "%Y-%m-%d %H:%M:%S", confirm = TRUE) {
+set_timestamp_format <- function(ts_format = "%Y-%m-%dT%H:%M:%S%z", confirm = TRUE) {
   .config$ts_format <- ts_format
-  if (confirm) print(paste0("Timestamp format set to ", ts_format))
-  invisible()
+  if (confirm) {
+    print(paste0("Timestamp format set to ", ts_format))
+    print(paste0("Current time in this format: ", format(Sys.time(), format = ts_format)))
+  }
 }
+
 
 #' Get Timestamp Format
 #' 
 #' Get timestamp format for use in output logs.
 #' 
-#' @examples getTimestampFormat()
+#' @examples get_timestamp_format()
 #'
 #' @export
-getTimestampFormat <- function() {
+get_timestamp_format <- function() {
   .config$ts_format
 }

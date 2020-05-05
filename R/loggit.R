@@ -1,59 +1,44 @@
-#' Log Message to Output File
+#' Log entries to file
 #'
 #' This function executes immediately before the function definitions for the
 #' base handler functions ([message][base::message], [warning][base::warning],
 #' and [stop][base::stop], and logs their timestamped output (a bit more
-#' verbosely) to a log file. The log file defaults to a
-#' [JSON](https://www.json.org/) file, which is a portable file format that is
-#' easily parsed by many systems, but will eventually have a `.txt` option as
-#' well.
+#' verbosely) to a log file. The log file is an
+#' [ndjson](https://github.com/ndjson) file, which is a portable, JSON-based
+#' format that is easily parsed by many line-processing systems.
 #'
-#' While this function has an intended use of logging handler messages without
-#' any direct user interaction, it is flexible enough to be used as you see fit.
-#'
-#' @param log_lvl Level of log output. In actual practice, one of "INFO",
-#'   "WARN", and "ERROR" are common, but any string may be supplied. Will be
-#'   coerced to class `character`.
+#' @param log_lvl Level of log output. In actual practice, one of "DEBUG",
+#'   "INFO", "WARN", and "ERROR" are common, but any string may be supplied if
+#'   `custom_log_lvl` is TRUE. Will be coerced to class `character`.
 #' @param log_msg Main log message. Will be coerced to class `character`.
-#' @param log_detail Additional detail recorded along with a log message.
 #' @param ... A named `list` or named `vector` (each element of length one) of
 #'   other custom fields you wish to log. You do not need to explicitly provide
 #'   these fields as a formal list or vector, as shown in the example; R handles
 #'   the coercion.
-#' @param echo Should a message be printed to the console as well? Defaults to
-#'   `TRUE`, and is truncated to just the level & message of the log. This
+#' @param echo Should the log file entry be printed to the console as well?
+#'   Defaults to `TRUE`, and will print out the `ndjson` line to be logged. This
 #'   argument is passed as `FALSE` when called from `loggit`'s handlers, since
 #'   they still call base R's handlers at the end of execution, all of which
 #'   print to the console as well.
+#' @param custom_log_lvl Allow log levels other than "DEBUG", "INFO", "WARN",
+#'   and "ERROR"? Defaults to `FALSE`, to prevent possible typos by the
+#'   developer, and to limit the variation in structured log contents. Overall,
+#'   setting this to `TRUE`` is not recommended, but is an option for
+#'   consistency with other frameworks the user may work with.
 #'
 #' @examples
-#' agree_to_upcoming_loggit_updates()
-#' loggit("INFO", "This is a message", but_maybe = "you want more fields?",
-#' sure = "why not?", like = 2, or = 10, what = "ever")
+#'   loggit("INFO", "This is a message", but_maybe = "you want more fields?",
+#'   sure = "why not?", like = 2, or = 10, what = "ever")
 #'
 #' @export
-loggit <- function(log_lvl, log_msg, log_detail = "", ..., echo = TRUE) {
-  
-  if (!.config$agreed_to_upcoming_loggit_updates) {
-    base::stop(paste0("ERROR: loggit will soon be receiving major updates to how it works in v2.0! ",
-                      "Logs will instead be written to `ndjson`, or newline-delimited JSON files, ",
-                      "as well as changes to names of helper functions, like getLogFile() etc. ",
-                      "This is expected by end of April, 2020. Please plan for these changes accordingly, ",
-                      "and follow the package GitHub page for updates!\n",
-                      "If you wish to suppress this error and resume logging with the current version, ",
-                      "please run `agree_to_upcoming_loggit_updates()` in your script(s) or package(s).\n",
-                      "Aborting."))
-  }
-  
-  if (.config$templogfile && !.config$seenmessage) {
-    base::warning(paste0("loggit has no persistent log file. Please set with ",
-                         "setLogFile(logfile), or see package?loggit for more help.\n ",
-                         "Otherwise, you can recover your logs (from THIS R SESSION ONLY) ",
-                         "via copying ", .config$logfile, " to a persistent folder."))
-    if (log_detail == "") log_detail <- "User was warned about non-persistent log file."
-    .config$seenmessage <- TRUE
-  } else {
-    .config$templogfile <- FALSE
+loggit <- function(log_lvl, log_msg, ..., echo = TRUE, custom_log_lvl = FALSE) {
+  # Try to suggest limited log levels to prevent typos by users
+  log_lvls <- c("DEBUG", "INFO", "WARN", "ERROR")
+  if (!(log_lvl %in% log_lvls) && !custom_log_lvl) {
+    base::stop(paste0("Nonstandard log_lvl ('", log_lvl, "').\n",
+                      "Should be one of DEBUG, INFO, WARN, or ERROR. Please check if you made a typo.\n",
+                      "If you insist on passing a custom level, please set 'custom_log_lvl = TRUE' in the call to 'loggit()'."
+    ))
   }
   
   timestamp <- format(Sys.time(), format = .config$ts_format)
@@ -61,73 +46,24 @@ loggit <- function(log_lvl, log_msg, log_detail = "", ..., echo = TRUE) {
   dots <- list(...)
   
   if (length(dots) > 0) {
-    if (any(unlist(lapply(dots, length)) > 1))
+    if (any(unlist(lapply(dots, length)) > 1)) {
       base::warning("Each custom log field should be of length one, or else your logs will be multiplied!")
+    }
     log_df <- data.frame(
       timestamp = timestamp,
       log_lvl = as.character(log_lvl),
       log_msg = as.character(log_msg),
-      log_detail = log_detail,
       dots,
-      stringsAsFactors = FALSE)
+      stringsAsFactors = FALSE
+    )
   } else {
     log_df <- data.frame(
       timestamp = timestamp,
       log_lvl = as.character(log_lvl),
       log_msg = as.character(log_msg),
-      log_detail = log_detail,
-      stringsAsFactors = FALSE)
+      stringsAsFactors = FALSE
+    )
   }
   
-  if (!file.exists(.config$logfile) || length(readLines(.config$logfile)) == 0) {
-    logs_json <- dplyr::bind_rows(
-      data.frame(timestamp = timestamp,
-                 log_lvl = "INFO",
-                 log_msg = "Initial log",
-                 log_detail = "",
-                 stringsAsFactors = FALSE),
-      log_df)
-    jsonlite::write_json(logs_json, path = .config$logfile, pretty = TRUE)
-  } else {
-    logs_json <- jsonlite::read_json(.config$logfile, simplifyVector = TRUE)
-    logs_json <- dplyr::bind_rows(logs_json, log_df)
-    jsonlite::write_json(logs_json, path = .config$logfile, pretty = TRUE)
-  }
-  
-  if (echo) base::message(paste(c(log_lvl, log_msg), collapse = ": "))
-  
-  invisible()
-  
-}
-
-
-
-#' Return Log File as an R Object
-#'
-#' This function returns a `data.frame` (by default) containing all the logs in
-#' the provided JSON log file. If no explicit log fie is provided, calling this
-#' function will return a data frame of the log file currently pointed to by the
-#' loggit functions. Users can request that the logs be returned as a `list`,
-#' though this is not recommended.
-#'
-#' @param logfile JSON-format log file to return.
-#' @param as_df Should logfile be returned in a `data.frame` vs. a `list`?
-#'   Defaults to `TRUE`, and will return a `data.frame`.
-#'
-#' @return A `data.frame`.
-#' 
-#' @examples
-#' agree_to_upcoming_loggit_updates()
-#' setLogFile(file.path(tempdir(), "loggit.json"), confirm = FALSE)
-#' message("Test log message")
-#' get_logs(getLogFile())
-#'
-#' @export
-get_logs <- function(logfile, as_df = TRUE) {
-  if (missing(logfile)) logfile <- .config$logfile
-  if (!file.exists(logfile)) {
-    base::stop("Log file does not exist")
-  } else {
-    jsonlite::read_json(logfile, simplifyVector = as_df)
-  }
+  write_ndjson(log_df, echo = echo)
 }

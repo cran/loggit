@@ -1,76 +1,41 @@
-# Prevent warning from being raised by testthat's loggit() call
-.config$seenmessage_old <- .config$seenmessage
-.config$seenmessage <- TRUE
-agree_to_upcoming_loggit_updates()
+# ===
+context("loggit handlers")
 
-
-
-context("Handler replacements")
-
-test_that("message works as it does in base R", {
-  expect_message(base::message("this is a message test"))
-  expect_message(loggit::message("this is also a message test"))
-})
-
-test_that("warning works as it does in base R", {
-  expect_warning(base::warning("this is a warning test"))
-  expect_warning(loggit::warning("this is also a warning test"))
-})
-
-test_that("stop works as it does in base R", {
-  expect_error(base::stop("this is a stop test"))
-  expect_error(loggit::stop("this is also a stop test"))
-})
-
-test_that("stopifnot works as it does in base R", {
-  expect_error(base::stopifnot(is.numeric("this is a stopifnot test")))
-  expect_error(loggit::stopifnot(is.numeric("this is also a stopifnot test")))
-})
-
-file.remove(.config$logfile)
-
-
-
-context("File output")
-
-test_that("loggit writes to JSON file", {
-  
-  init_msg <- "Initial log"
+test_that("loggit writes handler messages to file", {
   msg <- "this is a message"
   warn <- "this is a warning"
   err <- "this is an error"
-  detail <- "and this is error detail"
   
-  expect_message(message(msg))
-  expect_warning(warning(warn))
-  expect_error(stop(err, log_detail = detail))
+  expect_message(message(msg, echo = FALSE))
+  expect_warning(warning(warn, echo = FALSE))
+  expect_error(stop(err, echo = FALSE))
   
-  logs_json <- jsonlite::read_json(file.path(.config$logfile), simplifyVector = TRUE)
+  logs_json <- read_logs()
   
-  expect_equal(nrow(logs_json), 4)
-  expect_equal(logs_json$log_lvl, c("INFO", "INFO", "WARN", "ERROR"))
-  expect_equal(logs_json$log_msg, c(init_msg, msg, warn, err))
-  expect_equal(logs_json$log_detail[4], detail)
-  
+  expect_equal(nrow(logs_json), 3)
+  expect_equal(logs_json$log_lvl, c("INFO", "WARN", "ERROR"))
+  expect_equal(logs_json$log_msg, c(msg, warn, err))
 })
-
-file.remove(.config$logfile)
-
+cleanup()
 
 
-context("Log file can be returned")
+# ===
+context("Custom log levels")
 
-test_that("Log file is returned via get_logs()", {
-  message("Test log entry")
-  x <- get_logs()
-  expect_equal(class(x), "data.frame")
-  expect_equal(nrow(x), 2)
-  x <- get_logs(as_df = FALSE)
-  expect_equal(class(x), "list")
-  expect_false(class(x) == "data.frame")
-  expect_length(x, 2)
+test_that("loggit custom levels behave as expected", {
+  expect_error(loggit(log_lvl = "foo", log_msg = "bar", echo = FALSE))
+  # There isn't really anything to test here, so just run it and let it succeed
+  loggit(log_lvl = "foo", log_msg = "bar", echo = FALSE, custom_log_lvl = TRUE)
 })
+cleanup()
 
-file.remove(.config$logfile)
 
-.config$seenmessage <- .config$seenmessage_old
+# ===
+context("Log file can be returned as data.frame")
+
+test_that("Log file is returned via read_logs()", {
+  message("msg", echo = FALSE)
+  log_df <- read_logs()
+  expect_true("data.frame" %in% class(log_df))
+})
+cleanup()
