@@ -14,44 +14,46 @@
 
 <title>Getting Started</title>
 
-<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
-// be compatible with the behavior of Pandoc < 2.8).
-document.addEventListener('DOMContentLoaded', function(e) {
-  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
-  var i, h, a;
-  for (i = 0; i < hs.length; i++) {
-    h = hs[i];
-    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
-    a = h.attributes;
-    while (a.length > 0) h.removeAttribute(a[0].name);
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
   }
-});
-</script>
-
-
-<style type="text/css">code{white-space: pre;}</style>
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
     position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -60,9 +62,9 @@ pre.numberSource code > span > a:first-child::before
   }
 pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
 div.sourceCode
-  {   }
+  {  }
 @media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+a.sourceLine::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -116,6 +118,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -343,65 +346,65 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div id="how-to-use-loggit" class="section level2">
 <h2>How to Use <code>loggit</code></h2>
 <p>To write a log entry using <code>loggit</code> via its exception handlers, you just load <code>loggit</code>, set its log file location, and use the same handlers you always do:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="kw">library</span>(loggit)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true"></a><span class="kw">set_logfile</span>(<span class="st">&quot;/path/to/my/log/directory/loggit.log&quot;</span>) <span class="co"># loggit enforces no specific file extension</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="kw">message</span>(<span class="st">&quot;This is a message&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2020-06-06T16:17:13-0500&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This is a message&quot;}</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="co">#&gt; This is a message</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a><span class="kw">warning</span>(<span class="st">&quot;This is a warning&quot;</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2020-06-06T16:17:13-0500&quot;, &quot;log_lvl&quot;: &quot;WARN&quot;, &quot;log_msg&quot;: &quot;This is a warning&quot;}</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a><span class="co">#&gt; Warning in warning(&quot;This is a warning&quot;): This is a warning</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a><span class="co"># stop(&quot;This is a critical error, so I&#39;m not actually going to run it in this vignette&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="kw">library</span>(loggit)</a>
+<a class="sourceLine" id="cb3-2" title="2"></a>
+<a class="sourceLine" id="cb3-3" title="3"><span class="kw">set_logfile</span>(<span class="st">&quot;/path/to/my/log/directory/loggit.log&quot;</span>) <span class="co"># loggit enforces no specific file extension</span></a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">message</span>(<span class="st">&quot;This is a message&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2021-02-27T20:37:41-0600&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This is a message&quot;}</span></a>
+<a class="sourceLine" id="cb4-3" title="3"><span class="co">#&gt; This is a message</span></a>
+<a class="sourceLine" id="cb4-4" title="4"><span class="kw">warning</span>(<span class="st">&quot;This is a warning&quot;</span>)</a>
+<a class="sourceLine" id="cb4-5" title="5"><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2021-02-27T20:37:41-0600&quot;, &quot;log_lvl&quot;: &quot;WARN&quot;, &quot;log_msg&quot;: &quot;This is a warning&quot;}</span></a>
+<a class="sourceLine" id="cb4-6" title="6"><span class="co">#&gt; Warning in warning(&quot;This is a warning&quot;): This is a warning</span></a>
+<a class="sourceLine" id="cb4-7" title="7"><span class="co"># stop(&quot;This is a critical error, so I&#39;m not actually going to run it in this vignette&quot;)</span></a></code></pre></div>
 <p>You can see that the handlers will pring both the <code>loggit</code>-generated log entry, as well as their base default output. To only have the JSON print, wrap the call in the appropriate suppressor (i.e. <code>suppressMessages()</code> or <code>suppressWarnings()</code>). To only have the base text printed, pass <code>echo = FALSE</code> to the handler.</p>
 <p>And… that’s it! You’ve introduced human-readable, machine-parsable logging into your workflow!</p>
 <p>However, surely you want more control over your logs.</p>
 <p>Behind the scenes, <code>loggit</code>’s core function, also called <code>loggit()</code>, is executed right before the base handlers with some sane defaults. However, the <code>loggit()</code> function is also exported for use by the developer:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="kw">loggit</span>(<span class="st">&quot;INFO&quot;</span>, <span class="st">&quot;This is also a message&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2020-06-06T16:17:13-0500&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This is also a message&quot;}</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="kw">loggit</span>(<span class="st">&quot;WARN&quot;</span>, <span class="st">&quot;This is also a warning&quot;</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2020-06-06T16:17:13-0500&quot;, &quot;log_lvl&quot;: &quot;WARN&quot;, &quot;log_msg&quot;: &quot;This is also a warning&quot;}</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="kw">loggit</span>(<span class="st">&quot;ERROR&quot;</span>, <span class="st">&quot;This is an error, but it won&#39;t stop your code from running like `stop()` does&quot;</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2020-06-06T16:17:13-0500&quot;, &quot;log_lvl&quot;: &quot;ERROR&quot;, &quot;log_msg&quot;: &quot;This is an error__COMMA__ but it won&#39;t stop your code from running like `stop()` does&quot;}</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">loggit</span>(<span class="st">&quot;INFO&quot;</span>, <span class="st">&quot;This is also a message&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" title="2"><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2021-02-27T20:37:41-0600&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This is also a message&quot;}</span></a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw">loggit</span>(<span class="st">&quot;WARN&quot;</span>, <span class="st">&quot;This is also a warning&quot;</span>)</a>
+<a class="sourceLine" id="cb5-4" title="4"><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2021-02-27T20:37:41-0600&quot;, &quot;log_lvl&quot;: &quot;WARN&quot;, &quot;log_msg&quot;: &quot;This is also a warning&quot;}</span></a>
+<a class="sourceLine" id="cb5-5" title="5"><span class="kw">loggit</span>(<span class="st">&quot;ERROR&quot;</span>, <span class="st">&quot;This is an error, but it won&#39;t stop your code from running like `stop()` does&quot;</span>)</a>
+<a class="sourceLine" id="cb5-6" title="6"><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2021-02-27T20:37:41-0600&quot;, &quot;log_lvl&quot;: &quot;ERROR&quot;, &quot;log_msg&quot;: &quot;This is an error__COMMA__ but it won&#39;t stop your code from running like `stop()` does&quot;}</span></a></code></pre></div>
 <p><em>“But why wouldn’t I just use the handlers instead?”</em></p>
 <p>Because <code>loggit()</code> exposes much greater flexibility to the user, by way of <em>custom fields</em>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="kw">loggit</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a>  <span class="st">&quot;INFO&quot;</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a>  <span class="st">&quot;This is a message&quot;</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  <span class="dt">but_maybe =</span> <span class="st">&quot;you want more fields?&quot;</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>  <span class="dt">sure =</span> <span class="st">&quot;why not?&quot;</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a>  <span class="dt">like =</span> <span class="dv">2</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>  <span class="dt">or =</span> <span class="dv">10</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a>  <span class="dt">what =</span> <span class="st">&quot;ever&quot;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a>)</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true"></a><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2020-06-06T16:17:13-0500&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This is a message&quot;, &quot;but_maybe&quot;: &quot;you want more fields?&quot;, &quot;sure&quot;: &quot;why not?&quot;, &quot;like&quot;: &quot;2&quot;, &quot;or&quot;: &quot;10&quot;, &quot;what&quot;: &quot;ever&quot;}</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="kw">loggit</span>(</a>
+<a class="sourceLine" id="cb6-2" title="2">  <span class="st">&quot;INFO&quot;</span>,</a>
+<a class="sourceLine" id="cb6-3" title="3">  <span class="st">&quot;This is a message&quot;</span>,</a>
+<a class="sourceLine" id="cb6-4" title="4">  <span class="dt">but_maybe =</span> <span class="st">&quot;you want more fields?&quot;</span>,</a>
+<a class="sourceLine" id="cb6-5" title="5">  <span class="dt">sure =</span> <span class="st">&quot;why not?&quot;</span>,</a>
+<a class="sourceLine" id="cb6-6" title="6">  <span class="dt">like =</span> <span class="dv">2</span>,</a>
+<a class="sourceLine" id="cb6-7" title="7">  <span class="dt">or =</span> <span class="dv">10</span>,</a>
+<a class="sourceLine" id="cb6-8" title="8">  <span class="dt">what =</span> <span class="st">&quot;ever&quot;</span></a>
+<a class="sourceLine" id="cb6-9" title="9">)</a>
+<a class="sourceLine" id="cb6-10" title="10"><span class="co">#&gt; {&quot;timestamp&quot;: &quot;2021-02-27T20:37:41-0600&quot;, &quot;log_lvl&quot;: &quot;INFO&quot;, &quot;log_msg&quot;: &quot;This is a message&quot;, &quot;but_maybe&quot;: &quot;you want more fields?&quot;, &quot;sure&quot;: &quot;why not?&quot;, &quot;like&quot;: &quot;2&quot;, &quot;or&quot;: &quot;10&quot;, &quot;what&quot;: &quot;ever&quot;}</span></a></code></pre></div>
 <p>Since JSON is considered <em>semi-structured data</em> (sometimes called “schema-on-read”), you can log any custom fields you like, as <em>inconsistently</em> as you like. It all just ends up as text in a file, with no column structure to worry about.</p>
 <p>So, <code>loggit</code>’s log format is a special type of JSON. JSON objects are like <code>list</code>s – and so are <code>data.frames</code>. To allow for the most flexibility, the <code>read_logs()</code> function is available to you, which reads in the currently-set log file as a data frame:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="kw">read_logs</span>()</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="co">#&gt;                  timestamp log_lvl</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="co">#&gt; 1 2020-06-06T16:17:12-0500   ERROR</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a><span class="co">#&gt; 2 2020-06-06T16:17:13-0500    INFO</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a><span class="co">#&gt; 3 2020-06-06T16:17:13-0500    WARN</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a><span class="co">#&gt; 4 2020-06-06T16:17:13-0500    INFO</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a><span class="co">#&gt; 5 2020-06-06T16:17:13-0500    WARN</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a><span class="co">#&gt; 6 2020-06-06T16:17:13-0500   ERROR</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a><span class="co">#&gt; 7 2020-06-06T16:17:13-0500    INFO</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a><span class="co">#&gt;                                                                         log_msg</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a><span class="co">#&gt; 1                             Means differ! (actual = 5.8658, expected = 5.8433</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a><span class="co">#&gt; 2                                                             This is a message</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a><span class="co">#&gt; 3                                                             This is a warning</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a><span class="co">#&gt; 4                                                        This is also a message</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a><span class="co">#&gt; 5                                                        This is also a warning</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a><span class="co">#&gt; 6 This is an error, but it won&#39;t stop your code from running like `stop()` does</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a><span class="co">#&gt; 7                                                             This is a message</span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a><span class="co">#&gt;               but_maybe     sure like or what</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a><span class="co">#&gt; 1                                            </span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a><span class="co">#&gt; 2                                            </span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a><span class="co">#&gt; 3                                            </span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a><span class="co">#&gt; 4                                            </span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a><span class="co">#&gt; 5                                            </span></span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a><span class="co">#&gt; 6                                            </span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a><span class="co">#&gt; 7 you want more fields? why not?    2 10 ever</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" title="1"><span class="kw">read_logs</span>()</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="co">#&gt;                  timestamp log_lvl</span></a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="co">#&gt; 1 2021-02-27T20:37:41-0600   ERROR</span></a>
+<a class="sourceLine" id="cb7-4" title="4"><span class="co">#&gt; 2 2021-02-27T20:37:41-0600    INFO</span></a>
+<a class="sourceLine" id="cb7-5" title="5"><span class="co">#&gt; 3 2021-02-27T20:37:41-0600    WARN</span></a>
+<a class="sourceLine" id="cb7-6" title="6"><span class="co">#&gt; 4 2021-02-27T20:37:41-0600    INFO</span></a>
+<a class="sourceLine" id="cb7-7" title="7"><span class="co">#&gt; 5 2021-02-27T20:37:41-0600    WARN</span></a>
+<a class="sourceLine" id="cb7-8" title="8"><span class="co">#&gt; 6 2021-02-27T20:37:41-0600   ERROR</span></a>
+<a class="sourceLine" id="cb7-9" title="9"><span class="co">#&gt; 7 2021-02-27T20:37:41-0600    INFO</span></a>
+<a class="sourceLine" id="cb7-10" title="10"><span class="co">#&gt;                                                                         log_msg</span></a>
+<a class="sourceLine" id="cb7-11" title="11"><span class="co">#&gt; 1                             Means differ! (actual = 5.8658, expected = 5.8433</span></a>
+<a class="sourceLine" id="cb7-12" title="12"><span class="co">#&gt; 2                                                             This is a message</span></a>
+<a class="sourceLine" id="cb7-13" title="13"><span class="co">#&gt; 3                                                             This is a warning</span></a>
+<a class="sourceLine" id="cb7-14" title="14"><span class="co">#&gt; 4                                                        This is also a message</span></a>
+<a class="sourceLine" id="cb7-15" title="15"><span class="co">#&gt; 5                                                        This is also a warning</span></a>
+<a class="sourceLine" id="cb7-16" title="16"><span class="co">#&gt; 6 This is an error, but it won&#39;t stop your code from running like `stop()` does</span></a>
+<a class="sourceLine" id="cb7-17" title="17"><span class="co">#&gt; 7                                                             This is a message</span></a>
+<a class="sourceLine" id="cb7-18" title="18"><span class="co">#&gt;               but_maybe     sure like or what</span></a>
+<a class="sourceLine" id="cb7-19" title="19"><span class="co">#&gt; 1                                            </span></a>
+<a class="sourceLine" id="cb7-20" title="20"><span class="co">#&gt; 2                                            </span></a>
+<a class="sourceLine" id="cb7-21" title="21"><span class="co">#&gt; 3                                            </span></a>
+<a class="sourceLine" id="cb7-22" title="22"><span class="co">#&gt; 4                                            </span></a>
+<a class="sourceLine" id="cb7-23" title="23"><span class="co">#&gt; 5                                            </span></a>
+<a class="sourceLine" id="cb7-24" title="24"><span class="co">#&gt; 6                                            </span></a>
+<a class="sourceLine" id="cb7-25" title="25"><span class="co">#&gt; 7 you want more fields? why not?    2 10 ever</span></a></code></pre></div>
 <p>Notice that <code>read_logs()</code> handles any columnar inconsistencies as mentioned above. If <code>read_logs()</code> finds a field that other entries don’t have, it maps it to an empty string for that log entry. This was chosen over <code>NA</code>s to allow for consistency on re-write. You can, however, just replace all the empty strings with <code>NA</code> after read, if you want to.</p>
 <p>You can also pass a file path to <code>read_logs()</code>, and read that <code>loggit</code> log file instead.</p>
 <p>The other helpful utilities are as follows:</p>
